@@ -1,79 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GitHub Project Showcase - KashifTech</title>
-
-    <!-- Bootstrap CSS for responsive layout and styling -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom Styles -->
-    <link rel="stylesheet" href="{{ asset('assets') }}/css/custom.css">
-    <style>
-        /* Wallpaper background styling */
-        .wallpaper-image {
-            height: 200px;
-            background: black url("{{ $settings['github_showcase_wallpaper_image_path'] ?? '' }}") no-repeat center;
-            background-size: cover;
-            border-radius: 12px;
-        }
-    </style>
-</head>
+@include('front.includes.index_header')
 
 <body>
 
-    <div class="container py-3">
-        @include('front.includes.banner')
+    <div class="container py-4">
+        @include('front.includes.index_messages')
+        @include('front.includes.index_profile_banner')
 
-        <!-- Section heading -->
-        <h1 class="text-center section-title">
-            {{ $settings['github_showcase_heading_text'] ?? '-----' }}</h1>
+        @include('front.includes.index_my_documents_label')
 
-        <!-- Project Cards Section -->
-        <div class="row g-4 mb-5">
-            @if ($github_projects->isNotEmpty())
-                <!-- Loop through each GitHub project and display in a card -->
-                @foreach ($github_projects as $project)
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card project-card h-100 shadow-sm">
-                            <div class="card-body d-flex flex-column">
-                                <!-- Project title -->
-                                <h5 class="card-title">{{ $project->github_title }}</h5>
-
-                                <!-- Project description -->
-                                <p class="card-text flex-grow-1">
-                                    {{ \Illuminate\Support\Str::limit($project->github_description ?: 'Description not available.', 200, '...') }}
-                                </p>
-
-                                <!-- Technologies used badges -->
-                                <div class="mb-2">
-                                    @if (!empty($project->usedTechnologies))
-                                        @foreach ($project->usedTechnologies as $tech)
-                                            <span
-                                                class="badge tech-badge">{{ $tech->skill->skill_title ?? '-----' }}</span>
-                                        @endforeach
-                                    @endif
-                                </div>
-
-                                <!-- GitHub repo link button -->
-                                @if (!empty($project->github_repo_url))
-                                    <a href="{{ $project->github_repo_url }}" target="_blank"
-                                        class="btn btn-sm btn-dark mt-2">View on GitHub</a>
-                                @endif
-                            </div>
+        <!-- Document Grid -->
+        <div class="row g-3" id="documents">
+            <!-- Each Document Card -->
+            <!-- ID Card -->
+            @for ($j = 0; $j < 9; $j++)
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <label class="card p-4 text-center document-card">
+                        <input type="checkbox" class="doc-checkbox" value="id_card" />
+                        <div>
+                            <svg width="32" height="32" fill="#43aa8b" viewBox="0 0 16 16">
+                                <path d="M0 4a2 2 0 012-2h12a2 2 0 012 2v1H0V4z" />
+                                <path
+                                    d="M0 6h16v6a2 2 0 01-2 2H2a2 2 0 01-2-2V6zm4 1a1 1 0 100 2 1 1 0 000-2zm0 3.5a2.5 2.5 0 00-2.5 2H6.5a2.5 2.5 0 00-2.5-2zm3-.5h5v1H7V10zm0-2h5v1H7V8z" />
+                            </svg>
                         </div>
-                    </div>
-                @endforeach
-            @else
-                @include('front.includes.empty_projects')
-            @endif
+                        <h6 class="mt-3">ID Card</h6>
+                    </label>
+                </div>
+            @endfor
         </div>
     </div>
+    @include('front.includes.index_footer')
 
+    @include('front.includes.index_download_button')
 
-    @include('front.includes.footer')
+    @include('front.includes.index_footer_script')
 </body>
 
 </html>
