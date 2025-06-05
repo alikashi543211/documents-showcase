@@ -1,6 +1,7 @@
 <!-- Header -->
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="fw-bold" style="color: #f3722c;">📁 My Documents</h5>
+    <h5 class="fw-bold" style="color: #f3722c;">📁 {{ $settings['docs_showcase_heading_text'] ?? '-----' }}</h1>
+    </h5>
     <div class="form-check form-switch d-flex align-items-center">
         <input class="form-check-input custom-switch" type="checkbox" id="selectAll">
         <label class="form-check-label ms-2 fw-semibold" for="selectAll" style="color: #2f2f2f;">Select All</label>

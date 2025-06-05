@@ -6,10 +6,6 @@
     </a>
 
     <!-- Profile Image -->
-    <img src="https://randomuser.me/api/portraits/men/75.jpg" class="profile-img" alt="Profile" />
-</div>
-
-<div class="text-center mt-4 mb-5">
-    <h4 class="fw-bold" style="color: #2f2f2f;">Kashif Ali</h4>
-    <p class="text-muted mb-0">Full Stack Web Developer</p>
+    <img src="{{ $settings['docs_showcase_profile_image_path'] ?? asset('assets/images/blank.png') }}" class="profile-img"
+        alt="Profile" />
 </div>

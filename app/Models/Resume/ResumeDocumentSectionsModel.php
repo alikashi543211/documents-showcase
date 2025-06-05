@@ -16,8 +16,8 @@ class ResumeDocumentSectionsModel extends Model
     public function getDocumentPathAttribute($value)
     {
         if (isset($value)) {
-            if (File::exists(public_path($value))) {
-                return url($value);
+            if (File::exists(env('RESUME_BASE_MEDIA_PATH') . $value)) {
+                return env('RESUME_BASE_MEDIA_PATH') . $value;
             }
         }
         return gallery_photo('empty.png', 'avatars');

@@ -34,4 +34,9 @@ class FrontController extends Controller
     {
         return $this->frontService->frontServiceUserLogout();
     }
+
+    public function downloadDocuments(Request $request)
+    {
+        return $this->frontService->downloadDocuments($request);
+    }
 }

@@ -1,5 +1,5 @@
     <!-- Download Button -->
-    <button class="btn btn-success btn-lg rounded-pill download-btn" id="downloadBtn">
+    <button class="btn btn-success btn-lg rounded-pill download-btn" data-document-ids="" id="downloadBtn">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" class="me-2"
             viewBox="0 0 16 16">
             <path

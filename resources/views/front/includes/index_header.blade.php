@@ -31,7 +31,7 @@
         }
 
         .profile-banner {
-            background-image: url("https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1400&q=80");
+            background-image: url("{{ $settings['docs_showcase_wallpaper_image_path'] ?? '' }}");
             background-size: cover;
             background-position: center;
             height: 200px;

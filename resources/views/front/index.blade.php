@@ -12,21 +12,27 @@
         <div class="row g-3" id="documents">
             <!-- Each Document Card -->
             <!-- ID Card -->
-            @for ($j = 0; $j < 9; $j++)
+            @if (count($documents) > 0)
+                @foreach ($documents as $doc)
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <label class="card p-4 text-center document-card" data-document-id="{{ $doc->id }}">
+                            <input type="checkbox" class="doc-checkbox" value="id_card" />
+                            <div>
+                                <svg width="32" height="32" fill="#43aa8b" viewBox="0 0 16 16">
+                                    <path d="M0 4a2 2 0 012-2h12a2 2 0 012 2v1H0V4z" />
+                                    <path
+                                        d="M0 6h16v6a2 2 0 01-2 2H2a2 2 0 01-2-2V6zm4 1a1 1 0 100 2 1 1 0 000-2zm0 3.5a2.5 2.5 0 00-2.5 2H6.5a2.5 2.5 0 00-2.5-2zm3-.5h5v1H7V10zm0-2h5v1H7V8z" />
+                                </svg>
+                            </div>
+                            <h6 class="mt-3">{{ $doc->document_title ?? '-----' }}</h6>
+                        </label>
+                    </div>
+                @endforeach
+            @else
                 <div class="col-12 col-sm-6 col-lg-4">
-                    <label class="card p-4 text-center document-card">
-                        <input type="checkbox" class="doc-checkbox" value="id_card" />
-                        <div>
-                            <svg width="32" height="32" fill="#43aa8b" viewBox="0 0 16 16">
-                                <path d="M0 4a2 2 0 012-2h12a2 2 0 012 2v1H0V4z" />
-                                <path
-                                    d="M0 6h16v6a2 2 0 01-2 2H2a2 2 0 01-2-2V6zm4 1a1 1 0 100 2 1 1 0 000-2zm0 3.5a2.5 2.5 0 00-2.5 2H6.5a2.5 2.5 0 00-2.5-2zm3-.5h5v1H7V10zm0-2h5v1H7V8z" />
-                            </svg>
-                        </div>
-                        <h6 class="mt-3">ID Card</h6>
-                    </label>
+                    <h1>No Documents Found</h1>
                 </div>
-            @endfor
+            @endif
         </div>
     </div>
     @include('front.includes.index_footer')
