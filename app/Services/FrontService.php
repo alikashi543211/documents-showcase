@@ -56,6 +56,12 @@ class FrontService
                 return response()->json(['error' => 'No documents found.'], 404);
             }
 
+            if (count($documents) == 1) {
+                $document = $documents->toArray()[0];
+                // Return the zip file as a download response
+                return response()->download($document['document_path'])->deleteFileAfterSend(true);
+            }
+
             // Create temporary zip file
             $zipFileName = 'kashif_ali_documents_' . time() . '.zip';
             $zipFilePath = storage_path('app/public/' . $zipFileName);
