@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Resume\ResumeBuilderSettingsModel;
 use App\Models\Resume\ResumeDocumentSectionsModel;
 use App\Models\Resume\ResumeGithubSectionsModel;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -48,6 +49,10 @@ class FrontService
 
     public function downloadDocuments($request)
     {
+        if (!$this->frontServiceHelperUserLoggedIn()) {
+            Session::flash('error', 'Please login to continue.');
+            return redirect()->to('user-login');
+        }
         try {
             $documentIds = explode(',', $request->input('ids'));
             $documents = ResumeDocumentSectionsModel::whereIn('id', $documentIds)->get();
@@ -57,13 +62,18 @@ class FrontService
             }
 
             if (count($documents) == 1) {
-                $document = $documents->toArray()[0];
-                // Return the zip file as a download response
-                return response()->download($document['document_path'])->deleteFileAfterSend(true);
+                $doc = $documents->first();
+                $extension = pathinfo($doc->document_path, PATHINFO_EXTENSION);
+                $fileName = ($doc->document_title ?? Str::random(10)) . '.' . $extension;
+                return response()->download($doc->document_path, $fileName, [
+                    'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                    'Pragma'        => 'no-cache',
+                    'Expires'       => '0',
+                ]);
             }
 
             // Create temporary zip file
-            $zipFileName = 'kashif_ali_documents_' . time() . '.zip';
+            $zipFileName = 'kashif_docs_' . time() . '.zip';
             $zipFilePath = storage_path('app/public/' . $zipFileName);
 
             $zip = new ZipArchive;
@@ -72,13 +82,19 @@ class FrontService
                     // Assuming $doc->file_path contains the file's relative path (e.g., 'documents/sample.pdf')
                     $filePath = $doc->document_path;
                     if (file_exists($filePath)) {
-                        $zip->addFile($filePath, basename($filePath));
+                        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+                        $fileName = ($doc->document_title ?? Str::random(10)) . '.' . $extension;
+                        $zip->addFile($filePath, $fileName);
                     }
                 }
                 $zip->close();
 
                 // Return the zip file as a download response
-                return response()->download($zipFilePath)->deleteFileAfterSend(true);
+                return response()->download($zipFilePath, $zipFileName, [
+                    'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                    'Pragma'        => 'no-cache',
+                    'Expires'       => '0',
+                ])->deleteFileAfterSend(true);
             } else {
                 return response()->json(['error' => 'Could not create zip file.'], 500);
             }
@@ -125,7 +141,7 @@ class FrontService
             Session::flash('error', $validator->errors()->first());
             return redirect()->to('/user-login');
         }
-
+        $inputs['username'] = strtolower($inputs['username']);
         // Fetch custom wallpaper and profile image paths from the settings table
         $settings = ResumeBuilderSettingsModel::where('key', 'LIKE', '%docs_showcase_%')->pluck('value', 'key')->toArray();
         $username = $settings['docs_showcase_login_username'] ?? 'kashif.ali';
@@ -133,7 +149,8 @@ class FrontService
         if ($inputs['username'] == $username && $inputs['password'] == $password) {
             Session::put('user_logged_in', [
                 'username' => $inputs['username'],
-                'password' => $inputs['password']
+                'password' => $inputs['password'],
+                'expires_at' => Carbon::now()->addMinutes($settings['docs_showcase_logout_in_minutes'] ?? 5)->timestamp
             ]);
 
             Session::flash('success', "You Logged in Successfully.");
@@ -159,9 +176,17 @@ class FrontService
         $password = $settings['docs_showcase_login_password'] ?? '12345678';
 
         if (Session::has('user_logged_in')) {
-            $user = Session::get('user_logged_in');
-            if ($user['username'] == $username && $user['password'] == $password) {
-                return true;
+            $userSession = Session::get('user_logged_in');
+            if ($userSession && isset($userSession['expires_at']) && time() < $userSession['expires_at']) {
+                $username = $userSession['username'];
+                $password = $userSession['password'];
+
+                if ($userSession['username'] == $username && $userSession['password'] == $password) {
+                    return true;
+                }
+            } else {
+                // Session expired or invalid
+                Session::forget('user_logged_in');
             }
         }
 
