@@ -150,7 +150,7 @@ class FrontService
             Session::put('user_logged_in', [
                 'username' => $inputs['username'],
                 'password' => $inputs['password'],
-                'expires_at' => Carbon::now()->addMinutes($settings['docs_showcase_logout_in_minutes'] ?? 5)->timestamp
+                'expires_at' => Carbon::now()->addMinutes(intval($settings['docs_showcase_logout_in_minutes']) ?? 5)->timestamp
             ]);
 
             Session::flash('success', "You Logged in Successfully.");
